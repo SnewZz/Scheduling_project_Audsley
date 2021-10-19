@@ -1,4 +1,5 @@
 import numpy as np
+import math
 import matplotlib.pyplot as plt
 import matplotlib, random, sys
 
@@ -44,8 +45,17 @@ def getMaxOffset(tasks_list):
 This method returns the period of the lowest priority task.
 '''
 def getMaxPeriod(tasks_list):
-	return tasks_list[-1][-2]
-
+	print("LCM : ", LCMPeriodofArray(tasks_list))
+	return LCMPeriodofArray(tasks_list)
+	# return tasks_list[-1][-2]
+'''
+This method returns the least common multiple of the differents period of an array of array given in parameter. 
+'''
+def LCMPeriodofArray(array):
+	lcm = array[0][-2]
+	for i in range(1,len(array)):
+		lcm = lcm*array[i][-2]//math.gcd(lcm, array[i][-2])
+	return lcm
  
 '''
 def timeValue(tasks_list):
@@ -123,20 +133,20 @@ def ftpScheduler(tasks_list):
 	task_number = 0 # 1 = 2 eme task
 	task_duration = 0
 	task_start = 0
-	while time <= interval_end and not verifyDeadlines(tasks_list,time): 
+	while time <= interval_end and not verifyDeadlines(tasks_list,time): #interval end = Omax+2P
 		answer = canBegin(tasks_list, time)
 		if answer != -1:
-			if answer != task_number:
+			if answer != task_number: #changement de task 
 				ftp_solution[task_number].append((task_start,task_duration))
 				task_duration = 1
 				task_start = time
 			else:
 				task_duration = task_duration + 1
-			task_number = answer
+			task_number = answer #pour se remémorer l'état précédent
 			tasks_list[task_number] = executeTask(tasks_list[task_number],task_number,time)
 		time = time + 1	
 	ftp_solution[task_number].append((task_start,task_duration)) #Quand une deadline a été manqué pour mettre ce qui a été fait et pour le dernier job executer 
-		
+	return not time < interval_end #for audsley
 	
 
 def colorChoice(colors_use):
@@ -188,6 +198,21 @@ def createGraph(solution,interval_end,deadlines_miss):
 
 	plt.show()
 
+def findLowestPriorityViable(tasks_list, result_list):
+	for task in tasks_list:
+		if(True):
+			result_list.append(task)
+			tasks_list.remove(task)
+			return True
+	return False
+
+def audsley(tasks_list, result_list):
+	if(len(tasks_list)== 1):
+		return True
+	if(not findLowestPriorityViable(tasks_list, result_list)):
+		return False
+	else:
+		return audsley(tasks_list, result_list)
 
 if __name__ == "__main__":
 	file_name = sys.argv[2]
@@ -209,7 +234,9 @@ if __name__ == "__main__":
 				print("* The task number must be equal or greater than 1 and must be equal or smaller than "+str(len(tasks_list)))
 				reply2 = input("* Please enter the number of a soft task : ") 
 	if sys.argv[1] == "audsley":
-		pass #A faire 
+		interval_end = getMaxOffset(tasks_list) + (2 * getMaxPeriod(tasks_list))
+		ftp_solution = initialFtpSolution(tasks_list)
+		audsley(tasks_list)
 	elif sys.argv[1] == "scheduler":
 		interval_end = getMaxOffset(tasks_list) + (2 * getMaxPeriod(tasks_list))
 		ftp_solution = initialFtpSolution(tasks_list)
