@@ -93,19 +93,23 @@ A completer quand audsely sera fini  + faire diagramme uml !!
 18			elif task_number == task_to_execute:
 19				job_duration += 1
 20			self.executeTask(task_to_execute)
-21		else:
-22			self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
-23			job_duration = 0
-24			job_start = 0 
-25		task_number = task_to_execute
-26		time += 1
-27	return not time < feas_int
+21		elif task_number == -1 and task_to_execute == -1:
+22				pass
+23		else:
+24			self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
+25			job_duration = 0
+26			job_start = 0 
+27		task_number = task_to_execute
+28		time += 1
+29	if task_number != -1 and time < feas_int:
+30		self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
+31	return not time < feas_int
 \end{lstlisting}
 
 \smallskip
 \noindent
-The purpose of this algorithm is to execute the FTP scheduler and returns ``TRUE'' if it ends correctly and ``FALSE'' otherwise. If it returns ``FALSE'' it means that the set of tasks are not schedulable. The variable \textbf{time} represents the current time in the scheduler. The variables \textbf{job\_duration} and \textbf{job\_start} represent the duration of the execution of one job and at which time the job is executed for the first time (these variables allow us to keep a track of the execution of all the jobs of all the tasks). The variable \textbf{task\_number} is the number of the task which has its job that is being executed. The variable \textbf{feas\_int} represents the upper bound of the feasibility interval which is calculated by the method ``computeFeasibilityInterval()''. The while loop will be explained in subsection 4.2. (Parler du task\_number $=$ 1 et pq ca ne gene pas)
-\newpage
+The purpose of this algorithm is to execute the FTP scheduler and returns ``TRUE'' if it ends correctly and ``FALSE'' otherwise. If it returns ``FALSE'' it means that the set of tasks are not schedulable. The variable \textbf{time} represents the current time in the scheduler. The variables \textbf{job\_duration} and \textbf{job\_start} represent the duration of the execution of one job and at which time the job is executed for the first time (these variables allow us to keep a track of the execution of all the jobs of all the tasks). The variable \textbf{task\_number} is the number of the task which has its job that is being executed (if the task which executes its job first is not the task 1 it is not a problem because in the list of solution for the task 1 we add the tuple ``(0,0)'') . The variable \textbf{feas\_int} represents the upper bound of the feasibility interval which is calculated by the method ``computeFeasibilityInterval()''. The while loop will be explained in subsection 4.2. The condition at the line 29 allows to add the execution of the job of the task which was executed when a deadline was missed in the list of solutions of the task.
+
 \subsection{Explanations of the while loop}
 
 To stay in the loop, two conditions must be respected : \\
@@ -145,9 +149,93 @@ It is the case when the job executed at time t-1 is the same as the job executed
 
 \smallskip
 \noindent
-It is the case when at time t-1 the job of a task is executed and at time t the job of another task is executed (see line 12 - 14 in the algorithm). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start} and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1. ET ON REMETS LES VALEURS DES VARIABLES 0 JOUUR
+It is the case when at time t-1 the job of a task is executed and at time t the job of another task is executed (see line 12 - 14 in the algorithm). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start}) and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1 (line 12 : ``self.tasks\_list[task\_number - 1].schedule\_solution.append((job\_start,job\_duration))''). We reset the value of the two variables (\textbf{job\_start} = time and \textbf{job\_duration} = 0) for the job which will be executed at time t. 
 
+\newpage
+\subsubsection{Case 3}
 
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{Pictures/Case3.jpg}
+  \caption{Case 3}
+  \label{fig: Case 3}
+\end{figure}
+
+\smallskip
+\noindent
+It is the case when a time t-1 the job of a task ended and a time t, there is no tasks that can execute their job (see line 24 -26 in the algorithm). So the value of \textbf{task\_number} is the task number which has its job executed at time t-1 and \textbf{task\_to\_execute} is -1 (because no tasks can execute their job). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start}) and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1 (line 12 : ``self.tasks\_list[task\_number - 1].schedule\_solution.append((job\_start,job\_duration))''). We also set the values of \textbf{job\_duration} and \textbf{job\_start} at 0.
+
+\subsubsection{Case 4}
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.5\textwidth]{Pictures/Case4.jpg}
+  \caption{Case 4}
+  \label{fig: Case 4}
+\end{figure}
+
+\smallskip
+\noindent
+It is the case when no job is executed at time t-1 (it means that the value of \textbf{task\_number = -1}) and a job can be executed a time t (it means that the value of \textbf{task\_to\_execute} is the number of the task which can execute its job). We just need to set the values of \textbf{job\_start} at time t and \textbf{job\_duration} at 1 (see line 16-17 in the algorithm) because a new job starts its execution.
+
+\subsubsection{Case 5}
+If the values of \textbf{task\_number} and \textbf{task\_to\_execute} are -1, we do nothing (see line 22 in the algorithm). 
+
+\newpage
+\subsection{Result of an execution}
+
+Consider that we have four tasks to schedule and they are ordered by priority : \\
+
+\smallskip
+\begin{center}
+\begin{tabular}{| l |}
+\hline
+Task 1 (Offset = 0, WCET = 10, Deadline = 50, Period = 50)\\
+Task 2 (Offset = 0, WCET = 20, Deadline = 80, Period = 80)\\
+Task 3 (Offset = 0, WCET = 10, Deadline = 100, Period = 100)\\
+Task 4 (Offset = 0, WCET = 50, Deadline = 200, Period = 200)\\
+\hline
+\end{tabular}
+\end{center}
+
+\smallskip
+\noindent
+Thus the priority of the tasks is : Task 1 $>$ Task 2 $>$ Task 3 $>$ Task 4. \\
+
+\noindent
+The result of the scheduling is : \\
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1.25\textwidth]{Figure_1.png}
+  \caption{Scheduling 1}
+  \label{fig: Scheduling 1}
+\end{figure}
+\noindent
+The arrow $\downarrow$ is when a job can start its execution and the arrow $\uparrow$ is the deadline of a job. 
+
+\newpage 
+\noindent
+But what happens if a deadline is missed ? Consider the following task : \\
+\begin{center}
+\begin{tabular}{| l |}
+\hline
+Task 1 (Offset = 0, WCET = 30, Deadline = 25, Period = 60)\\
+\hline
+\end{tabular}
+\end{center}
+This task will always miss its deadline. The result of the scheduling is :\\
+
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=1\textwidth]{Figure_2.png}
+  \caption{Scheduling 2}
+  \label{fig: Scheduling 2}
+\end{figure}
+\noindent
+ The read line shows that the deadline is missed. 
+ 
+\newpage
 \section{Audsley’s priority assignment}
 
 \newpage
