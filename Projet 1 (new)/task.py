@@ -39,3 +39,6 @@ class Task:
 	'''
 	def reinitializeScheduleSolution(self):
 		self.schedule_solution = []
+
+	def __str__(self):
+		return "task : " + str(self.task_number)
