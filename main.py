@@ -1,4 +1,4 @@
-import scheduler, task, sys, vizualizeScheduling
+import scheduler, task, sys, vizualizeScheduling, audsley
 
 
 def fileReader(filename):
@@ -27,13 +27,9 @@ if __name__ == "__main__":
 			v = vizualizeScheduling.VizualizeScheduling(s)
 			v.draw()
 		elif sys.argv[1] == "audsley":
-			pass
+			a = audsley.Audsley(task_list)
+			a.findFeasibleFTPAssignment()
 	except AttributeError:
 		print("The program must have two arguments : audsley|scheduler task_file")
 	except FileNotFoundError:
 		print("This file does not exist !")
-
-
-
-	
-
