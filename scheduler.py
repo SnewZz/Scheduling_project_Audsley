@@ -25,6 +25,14 @@ class Scheduler:
 				return task.task_number
 		return -1
 
+	def getTaskIndex(self,task_number):
+		index = 0
+		for task in self.tasks_list:
+			if task.task_number == task_number:
+				return index
+			index += 1
+		return index
+
 	
 	def verifyDeadlines(self,time):
 		"""
@@ -49,7 +57,7 @@ class Scheduler:
 		of the job is decrease by one. After that, if its computationnal requirement is equal 
 		to 0. It means that the job ended and so, the next job of the task to be executed has been modified.
 		"""
-		task = self.tasks_list[task_number - 1]
+		task = self.tasks_list[self.getTaskIndex(task_number)]
 		task.current_job.comp_req -= 1
 		if task.current_job.comp_req == 0:
 			task.new_current_job()
@@ -91,14 +99,14 @@ class Scheduler:
 		time = 0
 		job_duration = 0
 		job_start = 0 
-		task_number = 1
+		task_number = self.tasks_list[0].task_number
 		feas_int = self.computeFeasibilityInterval()
 		while time <= feas_int and self.verifyDeadlines(time):
 			task_to_execute = self.canBegin(time)
 			if task_to_execute != -1:
 				if task_to_execute != task_number:
 					if task_number != -1:
-						self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
+						self.tasks_list[self.getTaskIndex(task_number)].schedule_solution.append((job_start,job_duration))
 						job_duration = 1
 						job_start = time
 					else:
@@ -110,13 +118,13 @@ class Scheduler:
 			elif task_number == -1 and task_to_execute == -1:
 				pass
 			else:
-				self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
+				self.tasks_list[self.getTaskIndex(task_number)].schedule_solution.append((job_start,job_duration))
 				job_duration = 0
 				job_start = 0 
 			task_number = task_to_execute
 			time += 1
 		if task_number != -1 and time < feas_int:
-			self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
+			self.tasks_list[self.getTaskIndex(task_number)].schedule_solution.append((job_start,job_duration))
 		return not time < feas_int
 
 
