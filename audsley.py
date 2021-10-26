@@ -10,10 +10,9 @@ class Audsley:
     def findFeasibleFTPAssignment(self):
         output_file = open("audsley.txt", "w")
         if(self.audsley()):
-            print(self.result_list)
             for task in self.result_list:
                 print(task)
-                output_file.write(task)
+                output_file.write(str(task))
             output_file.close()
         else:
             print("no Feasible FTP Assignment")
@@ -21,35 +20,37 @@ class Audsley:
             output_file.close()
     def audsley(self):    
         if(len(self.tasks_list)==1):
+            print("base : ", self.tasks_list[0])
+            self.result_list.append(self.tasks_list[0])
             return True
         if(not self.findLowestPriorityViable()):
             return False
         else:
             return self.audsley()
 
-	# if(not findLowestPriorityViable(tasks_list, result_list)):
-	# 	return False
-	# else:
-	# 	return audsley(tasks_list, result_list)
-
     def findLowestPriorityViable(self):
+        print("1")
+        for task in self.result_list:
+            print(str(task))
+        print("--------------")
         for i, taski in enumerate(self.tasks_list):
+            print("taski : ", taski)
             tmplist = []
             for j, taskj in enumerate(self.tasks_list):
+                print("taskj : ", taskj)
                 if not i is j :
                     taskj.setSoftTask()
                     tmplist.insert(0, taskj)
+                else : 
+                    taskj.setHardTask()
             tmplist.append(taski)
             s = scheduler.Scheduler(tmplist)
             if s.startScheduler():
-                self.result_list.insert(0,tmplist[-1])
+                print("append")
+                for tmp in tmplist:
+                    print(tmp," soft:", tmp.soft)
+                self.result_list.append(tmplist[-1])
                 del self.tasks_list[i] #remove the new lowest priority 
                 return True 
         self.result_list = []
         return False
-	# for task in tasks_list:
-	# 	if(True):
-	# 		result_list.append(task)
-	# 		tasks_list.remove(task)
-	# 		return True
-	# return False

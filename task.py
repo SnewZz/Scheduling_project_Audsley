@@ -57,3 +57,6 @@ class Task:
 		It reinitializes the table which contains the solution of the scheduling for the task.
 		'''
 		self.schedule_solution = []
+
+	def __str__(self):
+		return str(self.offset) + " " + str(self.wcet) + " " + str(self.deadline) + " " + str(self.period) + "\n"

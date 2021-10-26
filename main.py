@@ -11,7 +11,10 @@ def fileReader(filename):
 	cnt = 1
 	for line in data:
 		tmp = line.split()
-		task_list.append(task.Task(tmp[0],tmp[1],tmp[2],tmp[3],cnt))
+		if int(tmp[0]) > 0:
+			task_list.append(task.Task(tmp[0], tmp[1], int(tmp[2])+ int(tmp[0]), tmp[3], cnt))
+		else:
+			task_list.append(task.Task(tmp[0],tmp[1],tmp[2],tmp[3],cnt))
 		cnt += 1
 	return task_list
 
