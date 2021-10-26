@@ -22,12 +22,21 @@ class Task:
 		self.deadline = int(deadline)
 		self.period = int(period)
 		self.task_number = int(task_number)
-		self.current_job = job.Job(offset,wcet,deadline)
+		self.current_job = self.first_job()
 		self.soft = False
 		self.jobs_deadlines_misses = [] 
 		self.schedule_solution = []
 
+	def __str__(self):
+		return str(self.offset) + " " + str(self.wcet) + " " + str(self.deadline) + " " + str(self.period) +"\n"
 
+	def first_job(self):
+		if self.offset > 0:
+			deadline = self.offset + self.deadline
+			return job.Job(self.offset,self.wcet,deadline)
+		else:
+			return job.Job(self.offset,self.wcet,self.deadline)
+	
 	def new_current_job(self):
 		'''
 		Create the following job of the task (because the previous job of the task has ended).
@@ -37,26 +46,25 @@ class Task:
 		new_cmp_req = self.wcet
 		self.current_job = job.Job(new_offset,new_cmp_req,new_deadline)
 
-
+	
 	def setSoftTask(self):
 		'''
 		It defines this task as a soft task.
 		'''
 		self.soft = True 
 
-
+	
 	def setHardTask(self):
 		'''
 		It defines this task as a hard task.
 		'''
 		self.soft = False
 
+	
 
+	
 	def reinitializeScheduleSolution(self):
 		'''
 		It reinitializes the table which contains the solution of the scheduling for the task.
 		'''
 		self.schedule_solution = []
-
-	def __str__(self):
-		return str(self.offset) + " " + str(self.wcet) + " " + str(self.deadline) + " " + str(self.period) + "\n"

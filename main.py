@@ -11,10 +11,7 @@ def fileReader(filename):
 	cnt = 1
 	for line in data:
 		tmp = line.split()
-		if int(tmp[0]) > 0:
-			task_list.append(task.Task(tmp[0], tmp[1], int(tmp[2])+ int(tmp[0]), tmp[3], cnt))
-		else:
-			task_list.append(task.Task(tmp[0],tmp[1],tmp[2],tmp[3],cnt))
+		task_list.append(task.Task(tmp[0],tmp[1],tmp[2],tmp[3],cnt))
 		cnt += 1
 	return task_list
 
@@ -36,3 +33,8 @@ if __name__ == "__main__":
 		print("The program must have two arguments : audsley|scheduler task_file")
 	except FileNotFoundError:
 		print("This file does not exist !")
+
+
+
+	
+

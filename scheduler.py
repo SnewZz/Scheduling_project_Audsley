@@ -96,6 +96,7 @@ class Scheduler:
 		It starts the scheduler. It returns true if the task set is schedulable and false otherwise. 
 		For more informations about this algorithm, see section 4 in the report.
 		"""
+		#print(self.tasks_list[0],self.tasks_list[1])
 		time = 0
 		job_duration = 0
 		job_start = 0 

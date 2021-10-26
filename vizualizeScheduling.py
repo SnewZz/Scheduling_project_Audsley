@@ -23,8 +23,8 @@ class VizualizeScheduling:
 		It generates the name of the task, e.g "Task 1". 
 		'''
 		position = 0.5
-		for index in range(len(self.scheduler.tasks_list)):
-			self.tasks_name.append("Task "+str(index + 1))
+		for task in self.scheduler.tasks_list:
+			self.tasks_name.append("Task "+str(task.task_number))
 			self.names_positions.append(position)
 			position += 1
 
