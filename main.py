@@ -16,23 +16,22 @@ def fileReader(filename):
 	return task_list
 
 if __name__ == "__main__":
-	try:
-		file_name = sys.argv[2]
-		task_list = fileReader(file_name)
-
-		if sys.argv[1] == "scheduler":
-			s = scheduler.Scheduler(task_list)
-			if not s.startScheduler():
-				print("The input task set is not schedulable")
-			v = vizualizeScheduling.VizualizeScheduling(s)
-			v.draw()
-		elif sys.argv[1] == "audsley":
-			a = audsley.Audsley(task_list)
-			a.findFeasibleFTPAssignment()
-	except AttributeError:
-		print("The program must have two arguments : audsley|scheduler task_file")
-	except FileNotFoundError:
-		print("This file does not exist !")
+	# try:
+	file_name = sys.argv[2]
+	task_list = fileReader(file_name)
+	if sys.argv[1] == "scheduler":
+		s = scheduler.Scheduler(task_list)
+		if not s.startScheduler():
+			print("The input task set is not schedulable")
+		v = vizualizeScheduling.VizualizeScheduling(s)
+		v.draw()
+	elif sys.argv[1] == "audsley":
+		a = audsley.Audsley(task_list)
+		a.findFeasibleFTPAssignment()
+	# except AttributeError:
+	# 	print("The program must have two arguments : audsley|scheduler task_file")
+	# except FileNotFoundError:
+	# 	print("This file does not exist !")
 
 
 
