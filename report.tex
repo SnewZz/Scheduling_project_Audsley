@@ -41,11 +41,11 @@ Faculty of sciences, ULB}
 
 \section{Introduction}
 
-This project is divided into three parts. We have to implement an FTP scheduler, a graphical tool to visualize the result of the scheduling and the Audsley algorithm. In this report, we will explain how we did that. In order to do that, we are going to discuss about the structure of our project, the implementation of the FTP scheduler and Audsley algorithm. We will also provide you an user guide. Before concluding, we will explain the difficulties that we met during the project.      
+This project is divided into three parts. We have to implement an FTP scheduler, a graphical tool to visualize the results of the scheduling and the Audsley algorithm. In this report, we will explain how we did that. In order to do that, we are going to discuss about the structure of our project, the implementation of the FTP scheduler and Audsley algorithm. We will also provide you an user guide. Before concluding, we will explain the difficulties that we met during the project.      
 
 \newpage
 
-\section{Project structure}
+\section{Project structure (Vincent)}
 
 We have decided to do the project in object oriented programming with Python. We have created different classes wich each represent an object and a file which runs the project. We have created these objects : \\
 \begin{itemize}
@@ -80,38 +80,43 @@ Where the value of option1 is ``scheduler'' if you want to run the scheduler and
 \section{FTP scheduler}
 \subsection{Algorithm}
 
+\lstset{
+language=Python,
+tabsize=2,
+keywordstyle=\color{blue}
+}
+
 \begin{lstlisting}
-1 def startScheduler(self):
-2	time = 0
-3	job_duration = 0
-4	job_start = 0 
-5	task_number = 1
-6	feas_int = self.computeFeasibilityInterval()
-7	while time <= feas_int and self.verifyDeadlines(time):
-8		task_to_execute = self.canBegin(time)
-9		if task_to_execute != -1:
-10			if task_to_execute != task_number:
-11				if task_number != -1:
-12					self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
-13					job_duration = 1
-14					job_start = time
-15				else:
-16					job_start = time
-17					job_duration = 1
-18			elif task_number == task_to_execute:
-19				job_duration += 1
-20			self.executeTask(task_to_execute)
-21		elif task_number == -1 and task_to_execute == -1:
-22				pass
-23		else:
-24			self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
-25			job_duration = 0
-26			job_start = 0 
-27		task_number = task_to_execute
-28		time += 1
-29	if task_number != -1 and time < feas_int:
-30		self.tasks_list[task_number - 1].schedule_solution.append((job_start,job_duration))
-31	return not time < feas_int
+1 time = 0
+2	job_duration = 0
+3	job_start = 0 
+4	task_number = tasks_list[0].task_number
+5	feas_int = computeFeasibilityInterval()
+6	while time <= feas_int and verifyDeadlines(time):
+7		task_to_execute = canBegin(time)
+8		if task_to_execute != -1:
+9			if task_to_execute != task_number:
+10				if task_number != -1:
+11					tasks_list[getTaskIndex(task_number)].schedule_solution.append((job_start,job_duration))
+12					job_duration = 1
+13					job_start = time
+14				else:
+15					job_start = time
+16					job_duration = 1
+17			elif task_number == task_to_execute:
+18				job_duration += 1
+19			executeTask(task_to_execute)
+20		elif task_number == -1 and task_to_execute == -1:
+21			pass
+22		else:
+23			tasks_list[getTaskIndex(task_number)].schedule_solution.append((job_start,job_duration))
+24			job_duration = 0
+25			job_start = 0 
+26		task_number = task_to_execute
+27		time += 1
+28	if task_number != -1 and time < feas_int:
+29		tasks_list[getTaskIndex(task_number)].schedule_solution.append((job_start,job_duration))
+30	return not time < feas_int
 \end{lstlisting}
 
 \smallskip
@@ -141,7 +146,7 @@ When the program enters in the loop, it first calculates which task can execute 
 
 \smallskip
 \noindent
-It is the case when the job executed at time t-1 is the same as the job executed a time t (see line 18 - 19 in the algorithm). It is the easiest case. Indeed, we just need to increment the duration of the execution of job because the job will be executed one more unit of time. 
+It is the case when the job executed at time t-1 is the same as the job executed a time t (see line 17 - 18 in the algorithm). It is the easiest case. Indeed, we just need to increment the duration of the execution of job because the job will be executed one more unit of time. 
 
 
 \newpage
@@ -157,7 +162,7 @@ It is the case when the job executed at time t-1 is the same as the job executed
 
 \smallskip
 \noindent
-It is the case when at time t-1 the job of a task is executed and at time t the job of another task is executed (see line 12 - 14 in the algorithm). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start}) and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1 (line 12 : ``self.tasks\_list[task\_number - 1].schedule\_solution.append((job\_start,job\_duration))''). We reset the value of the two variables (\textbf{job\_start} = time and \textbf{job\_duration} = 0) for the job which will be executed at time t. 
+It is the case when at time t-1 the job of a task is executed and at time t the job of another task is executed (see line 10 - 13 in the algorithm). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start}) and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1. We reset the value of the two variables (\textbf{job\_start} = time and \textbf{job\_duration} = 0) for the job which will be executed at time t. 
 
 \newpage
 \subsubsection{Case 3}
@@ -171,7 +176,7 @@ It is the case when at time t-1 the job of a task is executed and at time t the 
 
 \smallskip
 \noindent
-It is the case when a time t-1 the job of a task ended and a time t, there is no tasks that can execute their job (see line 24 -26 in the algorithm). So the value of \textbf{task\_number} is the task number which has its job executed at time t-1 and \textbf{task\_to\_execute} is -1 (because no tasks can execute their job). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start}) and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1 (line 12 : ``self.tasks\_list[task\_number - 1].schedule\_solution.append((job\_start,job\_duration))''). We also set the values of \textbf{job\_duration} and \textbf{job\_start} at 0.
+It is the case when a time t-1 the job of a task ended and a time t, there is no tasks that can execute their job (see line 22 -25 in the algorithm). So the value of \textbf{task\_number} is the task number which has its job executed at time t-1 and \textbf{task\_to\_execute} is -1 (because no tasks can execute their job). In this case, we add a tuple composed of the start time of the job (given by the variable \textbf{job\_start}) and its duration (given by the variable \textbf{job\_duration}) in a list belonging to the task whose the job was executed at time t-1. We also set the values of \textbf{job\_duration} and \textbf{job\_start} at 0.
 
 \subsubsection{Case 4}
 
@@ -184,10 +189,10 @@ It is the case when a time t-1 the job of a task ended and a time t, there is no
 
 \smallskip
 \noindent
-It is the case when no job is executed at time t-1 (it means that the value of \textbf{task\_number = -1}) and a job can be executed a time t (it means that the value of \textbf{task\_to\_execute} is the number of the task which can execute its job). We just need to set the values of \textbf{job\_start} at time t and \textbf{job\_duration} at 1 (see line 16-17 in the algorithm) because a new job starts its execution.
+It is the case when no job is executed at time t-1 (it means that the value of \textbf{task\_number = -1}) and a job can be executed a time t (it means that the value of \textbf{task\_to\_execute} is the number of the task which can execute its job). We just need to set the values of \textbf{job\_start} at time t and \textbf{job\_duration} at 1 (see line 14-16 in the algorithm) because a new job starts its execution.
 
 \subsubsection{Case 5}
-If the values of \textbf{task\_number} and \textbf{task\_to\_execute} are -1, we do nothing (see line 22 in the algorithm). 
+If the values of \textbf{task\_number} and \textbf{task\_to\_execute} are -1, we do nothing (see line 20-21 in the algorithm). 
 
 \newpage
 \subsection{Result of an execution}
@@ -215,12 +220,12 @@ The result of the scheduling is : \\
 
 \begin{figure}[h!]
   \centering
-  \includegraphics[width=1.25\textwidth]{Figure_1.png}
+  \includegraphics[width=1\textwidth]{Figure_1.png}
   \caption{Scheduling 1}
   \label{fig: Scheduling 1}
 \end{figure}
 \noindent
-The arrow $\downarrow$ is when a job can start its execution and the arrow $\uparrow$ is the deadline of a job. 
+The arrow $\uparrow$ is when a job can start its execution and the arrow $\downarrow$ is the deadline of a job. 
 
 \newpage 
 \noindent
@@ -244,14 +249,20 @@ This task will always miss its deadline. The result of the scheduling is :\\
  The read line shows that the deadline is missed. 
  
 \newpage
-\section{Audsley’s priority assignment}
+\section{Audsley’s priority assignment (Vincent)}
 
 \newpage
 
 \section{Difficulties}
 
+The first difficulty that we have met, is to create the visualize tool. We did not know which type of graphic to choose to represent the solution. We have decided to work with Gant diagrams. After that, we have read the documentation of the function that allows to do this kind of diagram. The method requires two arguments : a list of tuples (A,B) and a tuple composed of the minimum ``y'' coordinate and the maximum ``y'' coordinate. The ``A'' is the x coordinate of the start of the rectangle that will be drawn by the function and ``B'' is the size of the rectangle. Once we knew that, we had to find a way to keep track of the execution of the job (when they started and the duration of their executions). In order to do that, we have create a parameter for each tasks that allow us to save these informations. \\
+
+\smallskip
+\noindent
+Once we had our visual tool, we started to test our scheduler. We noticed some errors. In order to solve them, we thought about the different possible cases (we explain these cases at section 4.2). As soon as our scheduler worked well, we started to implement the Audsley algorithm. The implementation of this algorithm was not a problem for us because we understood well how its works. The only two problems that we met with this algorithm was that we forgot to set the tasks as hard tasks after each iterations (in order to find the lowest priority viable variable) and thus the priority assignment was always wrong. The second problem was about our solution. When we found a lowest priority viable variable, we inserted it with the method ``insert(-1,the task)'' and therefore our order was always wrong (the solution was to replace the -1 by 0). 
+
 \newpage
 
-\section{Conclusion}
+\section{Conclusion(Vincent)}
 
 \end{document}
