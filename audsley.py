@@ -25,7 +25,6 @@ class Audsley:
     def audsley(self):    
         if(len(self.tasks_list) == 1):
             s = scheduler.Scheduler(self.tasks_list)
-            print(self.tasks_list[0])
             self.result_list.insert(0, self.tasks_list[0])
             return s.startScheduler()
         if(not self.findLowestPriorityViable()):
@@ -48,13 +47,13 @@ class Audsley:
             if s.startScheduler():
                 self.result_list.insert(0,  hard_task)
                 del self.tasks_list[i] #remove the new lowest priority 
-                self.reinitializeTasksList()
+                self.__reinitializeTasksList()
                 return True 
-            self.reinitializeTasksList()
+            self.__reinitializeTasksList()
         self.result_list = []
         return False
 	
-    def reinitializeTasksList(self):
+    def __reinitializeTasksList(self):
         """
         This method set all the tasks from the tasks_list to hard and reinitialize their current_job to the first one.
         """
