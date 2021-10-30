@@ -28,7 +28,7 @@ class Task:
 		self.schedule_solution = []
 
 	def __str__(self):
-		return str(self.offset) + " " + str(self.wcet) + " " + str(self.deadline) + " " + str(self.period) + "soft :" + str(self.soft) +"\n"
+		return str(self.offset) + " " + str(self.wcet) + " " + str(self.deadline) + " " + str(self.period) +"\n"
 
 	def first_job(self):
 		if self.offset > 0:

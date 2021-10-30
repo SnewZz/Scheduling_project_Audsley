@@ -32,36 +32,6 @@ class Audsley:
             return False
         else:
             return self.audsley()
-
-	# def findLowestPriorityViable(self):
-    #     print("1")
-    #     for task in self.result_list:
-    #         print(str(task))
-    #     print("--------------")
-    #     for i, taski in enumerate(self.tasks_list):
-    #         print("taski : ", taski)
-    #         tmplist = []
-    #         for j, taskj in enumerate(self.tasks_list):
-    #             print("taskj : ", taskj)
-    #             print("bug : ", not i is j)
-    #             if not i is j :
-    #                 taskj.setSoftTask()
-    #                 print("insert soft : ", taskj)
-    #                 tmplist.insert(0, taskj)
-    #             else : 
-    #                 taskj.setHardTask()
-    #                 print("hard : ", taskj)
-    #         tmplist.append(taski)
-    #         s = scheduler.Scheduler(tmplist)
-    #         if s.startScheduler():
-    #             print("append")
-    #             for tmp in tmplist:
-    #                 print(tmp)
-    #             self.result_list.insert(0, tmplist[-1])
-    #             del self.tasks_list[i] #remove the new lowest priority 
-    #             return True 
-    #     self.result_list = []
-    #     return False
     
     def findLowestPriorityViable(self):
         for i, hard_task in enumerate(self.tasks_list): #loop to try to find the LPV which is an hard task
@@ -74,10 +44,6 @@ class Audsley:
                     hard_task.setHardTask()
             tmplist.append(hard_task)
             s = scheduler.Scheduler(tmplist)
-
-            # for task in s.tasks_list:
-            #     print(task)
-            # print("###############")
 
             if s.startScheduler():
                 self.result_list.insert(0,  hard_task)
