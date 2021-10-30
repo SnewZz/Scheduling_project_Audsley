@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib
 import scheduler 
 
 """
@@ -27,21 +28,6 @@ class VizualizeScheduling:
 			self.tasks_name.append("Task "+str(task.task_number))
 			self.names_positions.append(position)
 			position += 1
-
-	'''
-	This method allows to make an arrow. 
-	'''
-	def makeArrow(self,x,y_min,y_max,orientation):
-		#delta = self.scheduler.computeFeasibilityInterval() // self.scheduler.hyperPeriod()
-		if orientation == "up":
-			x1, y1 = [x,x + 5] , [y_max,y_max - 0.15]
-			x2, y2 = [x - 5,x] , [y_max - 0.15,y_max]
-		elif orientation == "down":
-			x1, y1 = [x,x + 5] , [y_min,y_min + 0.15]
-			x2, y2 = [x - 5,x] , [y_min + 0.15,y_min]
-		plt.vlines(x = x, ymin = y_min, ymax = y_max,colors = 'black',linestyles = 'dotted')
-		plt.plot(x1,y1,'--',color='black')
-		plt.plot(x2,y2,'--',color='black')
 		
  
 	def draw(self):
@@ -65,14 +51,16 @@ class VizualizeScheduling:
 		for task in self.scheduler.tasks_list:
 			offset = task.offset
 			while offset < interval_end:
-				self.makeArrow(offset, y, y + 0.5,"down")
-				self.makeArrow(offset + task.deadline, y + 0.5, y + 1,"up")
+				plt.quiver(offset,y+0.5,0,1,color = 'black',headwidth = 2.5,minshaft = 2.5,pivot = 'tip')
+				plt.quiver(offset + task.deadline,y+1,0,-1,color = 'black',headwidth = 2.5,minshaft = 2.5)
 				offset = offset + task.period
 			y = y + 1
 		for task in self.scheduler.tasks_list:
 			for miss in task.jobs_deadlines_misses:
 				plt.vlines(x = miss[1], ymin = miss[0] - 1, ymax = miss[0],colors = 'red', linestyles ='solid',linewidth = 3)
+
 		plt.show()
+
 
 		
 
